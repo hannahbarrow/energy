@@ -1,6 +1,6 @@
 ---
-title: "The cost of our consumption:"
-subtitle: "GDP, Energy Use, Carbon Emissions, and Changing Tempuratures"
+title: "The Cost of Our Consumption:"
+subtitle: "GDP, Energy Use, Carbon Emissions, and Changing Temperatures"
 author: "Hannah Barrow"
 date: "2026-02-17"
 output: html_document
