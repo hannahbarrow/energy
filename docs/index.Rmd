@@ -10,9 +10,11 @@ output: html_document
 
 For this data story, I am interested in how **Sustainable Development Goals 7** (affordable and clean energy), **12** (responsible consumption and production), and **13** (climate action) differ among countries with varying GDP's. I will be using these 7 countries to investigating these relationships: the US, Germany, Egypt, India, Brazil, Australia, and Japan. 
 
+to jump to [The Data Story](#the-data-story)
+
 ### Renewable Energy dataset
 
-This data set if provided by [the International Renewable Energy Agency (IRENA)](https://www.irena.org/Data), an agency driving sustainable energy use world wide and providing data on renewable energy. We will be calling this dataset "energy" and filtering the data to only include the 7 countries of focus, calling that "energy_filtered". 
+This data set if provided by [the International Renewable Energy Agency (IRENA)](https://www.irena.org/Data), an agency driving sustainable energy use world wide and providing data on renewable energy. I will be calling this dataset "energy" and filtering the data to only include the 7 countries of focus, calling that "energy_filtered". 
 
 ```{r, eval=TRUE, echo=FALSE, message=FALSE}
 library(readr)
@@ -28,7 +30,7 @@ energy_filtered %>% head
 
 ### Gapminder dataset
 
-This data set if provided by [Gapminder](https://www.gapminder.org/data/), a foundation that provides data and transparency on human living conditions and global development. We will be calling this dataset "gapminder" and filtering the data to only include the 7 countries of focus, calling that "gapminder_filtered". 
+This data set if provided by [Gapminder](https://www.gapminder.org/data/), a foundation that provides data and transparency on human living conditions and global development. I will be calling this dataset "gapminder" and filtering the data to only include the 7 countries of focus, calling that "gapminder_filtered". 
 
 ```{r, eval=TRUE, echo=FALSE, message=FALSE}
 library(gapminder)
@@ -44,8 +46,7 @@ gapminder_filtered %>% head
 
 ### Carbon Emissions dataset
 
-This data set if provided by the [Global Carbon Project](https://www.globalcarbonproject.org/carbonbudget/). (I wasn't able to get the link to open, I think because it is blocked on the school wi-fi, but this is what I found). We will be calling this dataset "carbon" and filtering the data to only include the 7 countries of focus, calling that "carbon_filtered". 
- 
+This data set if provided by the [Global Carbon Project](https://www.globalcarbonproject.org/carbonbudget/), a research project working towards spreading information and knowledge to all on the challenge of fighting climate change. I will be calling this dataset "carbon" and filtering the data to only include the 7 countries of focus, calling that "carbon_filtered". 
 
 ```{r, eval=TRUE, echo=FALSE, message=FALSE}
 library(readr)
@@ -63,7 +64,7 @@ carbon_filtered %>% head
 
 ### Levelized Cost of Energy dataset
 
-This data set if provided by [Our World in Data](https://ourworldindata.org/grapher/levelized-cost-of-energy), an organization that provides data and infomation on global issues such as poverty, hunger, climate change, inequality, etc. We will be calling this dataset "econ" and filtering the data to only include the 7 countries of focus, calling that "econ_filtered". 
+This data set if provided by [Our World in Data](https://ourworldindata.org/grapher/levelized-cost-of-energy), an organization that provides data and infomation on global issues such as poverty, hunger, climate change, inequality, etc. I will be calling this dataset "econ" and filtering the data to only include the 7 countries of focus, calling that "econ_filtered". 
 
 ```{r, eval=TRUE, echo=FALSE, message=FALSE}
 library(readr)
@@ -90,9 +91,29 @@ The data that I am using is pulled from the [Carbon Emissions dataset](#carbon-e
 
 ...between the US, Germany, Egypt, India, Brazil, Australia, and Japan.
 
+### Table including my 4 focus measurments in 7 countries in 2022
+
+```{r tables, eval=TRUE, echo=FALSE, warning=FALSE, message=FALSE}
+carbon_filtered <- carbon %>% 
+  filter(country %in% c("United States","Germany","Egypt","India","Brazil","Australia","Japan")) %>% 
+    mutate(gdp_per_cap = gdp/population)
+
+library(knitr)
+
+carbon_filtered %>% 
+  filter(year == 2022) %>% 
+  group_by(country) %>% 
+  summarize(gdp_per_cap = mean(gdp_per_cap, na.rm = TRUE),
+            energy_per_capita = mean(energy_per_capita, na.rm = TRUE),
+            co2 = mean(co2, na.rm = TRUE),
+            temperature_change_from_co2 = mean(temperature_change_from_co2, na.rm = TRUE)) %>% 
+  arrange(gdp_per_cap) %>% 
+  kable
+```
+
 ### Growth of GDP per capita in 7 countries since 1830
 
-First, I am getting an idea of the discrepancies in GDP per capita among these 7 countries included in this analysis. It shows that the US, Australia and Germany tend to have the highest GDP's per capita while Egypt and India have only had significant increases since the 1960's. 
+First, I am getting an idea of the discrepancies in GDP per capita among these 7 countries included in this analysis. It shows that the US, Australia and Germany tend to have the highest GDP's per capita while Egypt and India have only had slight increases since the 1960's. 
 
 ```{r figure 1, eval=TRUE, echo=FALSE, warning=FALSE, message=FALSE}
 carbon_filtered <- carbon %>% 
@@ -159,11 +180,12 @@ ggplotly(f3)
 
 ### CO2 emissions per unit of energy in 7 countries over the past 20 years
 
-I saw that there was data on the CO2 emissions per unit energy and I wanted to see what this looked like in these countries, now keeping in mind their GDP per capita and their energy use per capita. It shows that India, the country with the lowest GDP and energy use per capita, has the highest CO2 emissions per unit of energy of all 7 countries over the past 20 years. Australia, a country with high GDP and energy use per capita, also has high CO2 emissions per unit of energy, even higher than the US. I also found it interesting that Brazil, Germany, and the US have the lowest CO2 emissions per unit of energy but were also the 3 countries with the highest temperature change from CO2. (I couldn't remember how to re order the countries on the x-axis). 
+I saw that there was data on the CO2 emissions per unit energy and I wanted to see what this looked like in these countries, now keeping in mind their [GDP per capita](#growth-of-gdp-per-capita-in-7-countries-since-1830) and their [energy use per capita](#energy-use-per-capita-in-7-countries-since-1965). It shows that India, the country with the lowest GDP and the lowest energy use per capita, has the highest CO2 emissions per unit of energy of all 7 countries over the past 20 years. Australia, a country with a high GDP and a high energy use per capita, also has high CO2 emissions per unit of energy, even higher than the US. I also found it interesting that Brazil, Germany, and the US have the lowest CO2 emissions per unit of energy but were also the 3 countries with the highest temperature change from CO2. 
 
 ```{r figure 4, eval=TRUE, echo=FALSE, warning=FALSE, message=FALSE}
 carbon_filtered <- carbon %>% 
   filter(country %in% c("United States","Germany","Egypt","India","Brazil","Australia","Japan")) %>% 
+  #factor(country, c("United States","Australia","Japan","Germany","Brazil","Egypt","India")) %>% 
   filter(year >= 2005 & year <= 2025)
 
 library(ggplot2)
@@ -175,13 +197,14 @@ ggplot(carbon_filtered,
   geom_violin(alpha = 0.5)+
   geom_jitter(size = 1.5, width = 0.2)+
   theme_bw()+
-  labs(x = "Country",
-       y = "CO2 per unit energy")
+  labs(x = "Countries by energy use in 2023",
+       y = "CO2 per unit energy")+
+  scale_x_discrete(limits = c("United States","Australia","Japan","Germany","Brazil","Egypt","India"))
 ```
 
 ### Energy per capita compared to tempurature change in 7 countries over the past 20 years
 
-Finally... this one doesn't look great but I was trying to make it work because I thought these would be cool together. The scales are too different for each so I tried facet wrapping them. It's hard to compare them but you can still see which ones have positive and negative relationships. India and Brazil, the countries with some of the the lowest GDP and energy use per capita, are the only two that show an increase in temperature change as energy use per capita increases which is not what I would have expected.
+Finally, I wanted to see the relationship between energy use and temperature change in these countries. India and Brazil, the countries with some of the the lowest GDP and energy use per capita, are the only two that show an increase in temperature change as energy use per capita increases. While the rest generally show a decrease in temperature even as they are using more energy, Australia and the US having the steepest slopes. 
 
 ```{r figure 5, eval=TRUE, echo=FALSE, warning=FALSE, message=FALSE}
 carbon_filtered <- carbon %>% 
@@ -199,37 +222,18 @@ f5 <- ggplot(carbon_filtered,
   theme_bw()+
   facet_wrap(~country, scales = "free")+
   labs(x = "Energy per capita (k)",
-       y = "Tempurature change from CO2")
+       y = "Tempurature change from CO2")+
+  theme(legend.position = "none")
 ggplotly(f5)
-```
-
-### Table showing GDP per capita, energy use per capita, CO2 emissions, and the rate of tempurature change in 7 countries in 2022
-
-```{r tables, eval=TRUE, echo=FALSE, warning=FALSE, message=FALSE}
-carbon_filtered <- carbon %>% 
-  filter(country %in% c("United States","Germany","Egypt","India","Brazil","Australia","Japan")) %>% 
-    mutate(gdp_per_cap = gdp/population)
-
-library(knitr)
-
-carbon_filtered %>% 
-  filter(year == 2022) %>% 
-  group_by(country) %>% 
-  summarize(gdp_per_cap = mean(gdp_per_cap, na.rm = TRUE),
-            energy_per_capita = mean(energy_per_capita, na.rm = TRUE),
-            co2 = mean(co2, na.rm = TRUE),
-            temperature_change_from_co2 = mean(temperature_change_from_co2, na.rm = TRUE)) %>% 
-  arrange(gdp_per_cap) %>% 
-  kable
 ```
 
 ## Takeaways
 
 The wealthiest countries per capita also tend to be the countries that are using the most energy. But interestingly enough, they are not the ones seeing the increases in temperatures as their energy consumption increases. For example, as energy consumption increases in the US, temperature change decreases, as you can see [above](#energy-per-capita-compared-to-tempurature-change-in-7-countries-over-the-past-20-years).
 
-The *cost* of our consumption is not often manifested in the same places. Countries with enough money to push the problems somewhere else or better financially support relief and preventative measures are also often the ones causing the greatest damage and not facing the hardest consequences. 
+The *consequences* of consumption are not often manifested in the same countries that are the *sources*. Countries with enough money to push the problems elsewhere or that better financially support relief and preventative measures are also often the ones causing the greatest damage and not facing the hardest consequences. 
 
-Sustainable Development Goals 12 is a particularly important goal that bleeds into so many others. If we want to think about energy and our climate crisis, we have to consider what we are consuming and just how many consequences there are that we do not see. 
+Sustainable Development Goals 12 is a particularly important goal that bleeds into so many others. If we want to think about energy and our climate crisis, we have to face reality and consider what we are consuming and just how many consequences there are that we might not see. 
 
 &nbsp; 
 
